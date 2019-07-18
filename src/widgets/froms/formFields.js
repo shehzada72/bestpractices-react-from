@@ -26,7 +26,46 @@ const FormFields = props => {
         const {name, value} = e.target;
         formData[name].value =  value;
 
+        let validData = validate(formData[name]);
+
+        formData[name].valid = validData[0];
+        formData[name].validationMessage = validData[1];
+
         props.changeHandler({formData})
+    };
+
+    const validate = element => {
+        let error = [true, ''];
+
+        if (element.validation.required){
+            const valid = element.value.trim() !== '';
+            const message = `${!valid ? "This field is required" : ""}`;
+
+            error = !valid ? [valid, message] : error;
+        }
+
+        if (element.validation.minLen){
+            const valid = element.value.length >= element.validation.minLen;
+            const message = `${!valid ? "Must be greater than" + element.validation.minLen : ""}`;
+
+            error = !valid ? [valid, message] : error;
+        }
+
+        return error;
+    };
+
+    const showValidation = element => {
+        let errorMessage = null;
+
+        if (element.validation && !element.valid) {
+            errorMessage = (
+                <div className={'label_error'}>
+                    {element.validationMessage}
+                </div>
+            )
+        }
+
+        return errorMessage;
     };
 
     const renderTemplates = data => {
@@ -43,6 +82,39 @@ const FormFields = props => {
                             value={values.value}
                             onChange={changeHandler}
                         />
+                        {showValidation(values)}
+                    </div>
+                );
+
+                break;
+            case('textarea'):
+                formTemplate = (
+                    <div>
+                        {showLabel(values.label, values.labelText)}
+                        <textarea
+                            {...values.config}
+                            value={values.value}
+                            onChange={changeHandler}
+                        />
+                        {showValidation(values)}
+                    </div>
+                );
+
+                break;
+            case('select'):
+                formTemplate = (
+                    <div>
+                        {showLabel(values.label, values.labelText)}
+                        <select
+                            value={values.value}
+                            name={values.config.name}
+                            onChange={changeHandler}
+                        >
+                            {values.config.options.map((item, index) => (
+                                <option key={index} value={item.val}>{item.text}</option>
+                            ))}
+                        </select>
+                        {showValidation(values)}
                     </div>
                 );
 
