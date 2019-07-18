@@ -21,15 +21,18 @@ const FormFields = props => {
         });
     };
 
-    const changeHandler = e => {
+    const changeHandler = (e, blur) => {
         let {formData} = props;
         const {name, value} = e.target;
         formData[name].value =  value;
 
-        let validData = validate(formData[name]);
+        if (blur) {
+            let validData = validate(formData[name]);
+            formData[name].valid = validData[0];
+            formData[name].validationMessage = validData[1];
+        }
 
-        formData[name].valid = validData[0];
-        formData[name].validationMessage = validData[1];
+        formData[name].touched = true;
 
         props.changeHandler({formData})
     };
@@ -80,7 +83,8 @@ const FormFields = props => {
                         <input
                             {...values.config}
                             value={values.value}
-                            onChange={changeHandler}
+                            onChange={e => changeHandler(e, false)}
+                            onBlur={e => changeHandler(e, true)}
                         />
                         {showValidation(values)}
                     </div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FormFields from '../widgets/froms/formFields';
-import {processFromFields} from "../utils/methods";
+import {checkFormIsValid, processFromFields} from "../utils/methods";
 
 class User extends Component {
 
@@ -89,8 +89,12 @@ class User extends Component {
 
         let dataToSubmit = processFromFields(this.state.formData);
 
+        let formIsValid = checkFormIsValid(this.state.formData);
 
-        console.log(dataToSubmit);
+
+        if (formIsValid ) {
+            console.log(dataToSubmit);
+        }
     };
 
     render(){

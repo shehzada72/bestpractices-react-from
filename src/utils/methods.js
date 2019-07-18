@@ -7,3 +7,13 @@ export const processFromFields = formData => {
 
     return dataToSubmit;
 };
+
+
+export const checkFormIsValid = formData => {
+    let formIsValid = true;
+    for(let key in formData) {
+        formIsValid = formData[key].valid && formIsValid;
+    }
+
+    return formIsValid;
+};
